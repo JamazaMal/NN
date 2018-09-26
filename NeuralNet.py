@@ -4,11 +4,13 @@ import numpy as np
 class NeuralNetwork(object):
     @staticmethod
     def activation(s):
-        return s / (1 + np.abs(s))
+        return s  # Linear
+        return s / (1 + np.abs(s))  # Sigmoid
 
     @staticmethod
-    def activation_d(s):
-        return 1 / (1  + np.abs(s)) ** 2
+    def activation_d(s):  # Sigmoid
+        return 1  # Linear
+        return 1 / (1 + np.abs(s)) ** 2
 
     def __init__(self, layers, lrate=0.001):
         # class variables
