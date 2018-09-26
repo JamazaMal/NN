@@ -22,7 +22,7 @@ class NeuralNetwork(object):
 
         self.weights = [None] * self.netsize
         for i in range(self.netsize):
-            self.weights[i] = np.random.rand(layers[i], layers[i+1])
+            self.weights[i] = np.random.randn(layers[i], layers[i+1])
 
     def forward(self, inputs):
         self.layeroutputs[0] = self.activation(np.dot(inputs, self.weights[0]))
