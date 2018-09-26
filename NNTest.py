@@ -3,11 +3,11 @@ import NeuralNet
 import TestData
 
 # Inputs
-inputs, outputs = TestData.getData(3)
-t_inputs, t_outputs = TestData.getData(3)
+inputs, outputs = TestData.getData(100)
+t_inputs, t_outputs = TestData.getData(10)
 
 
-NN = NeuralNet.NeuralNetwork([2, 2], .01)
+NN = NeuralNet.NeuralNetwork([2, 3, 3, 1], .0001)
 
 for _ in range(100000):
     NN.train(inputs, outputs)
@@ -15,4 +15,3 @@ for _ in range(100000):
 
 print(t_inputs)
 print(NN.forward(t_inputs))
-print(NN.weights)

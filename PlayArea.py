@@ -1,7 +1,11 @@
 import numpy as np
+import TestData
 
-x = np.array(([0], [1]), dtype=float)
+x, y = TestData.getData()
+print(x)
 
-print("x\n{}".format(x))
-print("x.T\n{}".format(x.T))
-print("x.T.T\n{}".format(x.T.T))
+i = [[z, 1] for z in range(1, 4)]
+print(i)
+
+t = np.array([[z, 1] for z in range(1, 4)], dtype=float)
+print(t)
