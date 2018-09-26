@@ -3,18 +3,14 @@ import numpy as np
 
 class NeuralNetwork(object):
     @staticmethod
-    def sigmoid(s):
-        # activation function
+    def activation(s):
         return s/(1+np.abs(s))
-        return 1/(1+np.exp(-s))
 
     @staticmethod
-    def sigmoidprime(s):
-        # derivative of sigmoid
-        return 1/((np.abs(s)+1)**2)
-        return s * (1 - s)
+    def activation_d(s):
+        return 1/(1+(np.abs(s))**2)
 
-    def __init__(self, _i, _h, _o):
+    def __init__(self, layers):
         # class variables
         self.z2 = None
         self.o_error = None
@@ -23,28 +19,43 @@ class NeuralNetwork(object):
         self.z2_delta = None
 
         self.learningrate = 0.01
+        self.netsize = len(layers)-1
 
-        # weights
-        self.W1 = np.random.randn(_i, _h)
-        self.W2 = np.random.randn(_h, _o)
+        self.layeroutputs = [None] * self.netsize
+        self.layeroutputdeltas = [None] * self.netsize
 
-    def forward(self, _inputs):
-        # forward propagation through our network
-        self.z2 = self.sigmoid(np.dot(_inputs, self.W1))
-        _outputs = self.sigmoid(np.dot(self.z2, self.W2))
-        return _outputs
+        self.weights = [None] * self.netsize
+        for i in range(self.netsize):
+            self.weights[i] = np.random.randn(layers[i], layers[i+1])
 
-    def backward(self, x, y, o):
-        # backward propagate through the network
-        self.o_error = y - o  # error in output
-        self.o_delta = (y - o)*self.sigmoidprime(o)  # applying derivative of sigmoid to error
+    def forward(self, inputs):
+        self.layeroutputs[0] = self.activation(np.dot(inputs, self.weights[0]))
+        for i in range(1,self.netsize):
+            self.layeroutputs[i] = self.activation(np.dot(self.layeroutputs[i-1], self.weights[i]))
 
-        self.z2_error = self.o_delta.dot(self.W2.T)  # z2 error: how much our layer weights contributed to output error
-        self.z2_delta = self.z2_error*self.sigmoidprime(self.z2)  # applying derivative of sigmoid to z2 error
+        #self.z2 = self.activation(np.dot(_inputs, self.weights[0]))
+        #_outputs = self.activation(np.dot(self.z2, self.weights[1]))
 
-        self.W1 += x.T.dot(self.z2_delta)*self.learningrate  # adjusting first set (input --> hidden) weights
-        self.W2 += self.z2.T.dot(self.o_delta)*self.learningrate  # adjusting second set (hidden --> output) weights
+        return self.layeroutputs[self.netsize-1]
 
-    def train(self, x, y):
-        o = self.forward(x)
-        self.backward(x, y, o)
+    def backward(self, inputs, y, o):
+
+        self.layeroutputdeltas[self.netsize] = (y - o)*self.activation_d(o)
+        for i in range(self.netsize-1, -1):
+            self.layeroutputdeltas[i] = self.layeroutputdeltas[i+1].dot(self.weights[i].T) * self.activation_d(self.layeroutputs[i])
+
+        self.weights[0] += inputs.T.dot(self.layeroutputdeltas[0]) * self.learningrate
+        for i in range(1, self.netsize):
+            self.weights[i] += self.layeroutputdeltas[i-1].T.dot(self.layeroutputdeltas[i]) * self.learningrate
+
+        #self.o_delta = (y - o)*self.activation_d(o)
+
+        #self.z2_error = self.o_delta.dot(self.weights[1].T)
+        #self.z2_delta = self.z2_error*self.activation_d(self.z2)
+
+        #self.weights[0] += x.T.dot(self.z2_delta)*self.learningrate
+        #self.weights[1] += self.z2.T.dot(self.o_delta)*self.learningrate
+
+    def train(self, inputs, expectedoutputs):
+        outputs = self.forward(inputs)
+        self.backward(inputs, expectedoutputs, outputs)
