@@ -4,12 +4,12 @@ import numpy as np
 class NeuralNetwork(object):
     @staticmethod
     def activation(s):
-        return s  # Linear
+        #return s  # Linear
         return s / (1 + np.abs(s))  # Sigmoid
 
     @staticmethod
     def activation_d(s):  # Sigmoid
-        return 1  # Linear
+        #return 1  # Linear
         return 1 / (1 + np.abs(s)) ** 2
 
     def __init__(self, layers, lrate=0.001):
@@ -37,7 +37,7 @@ class NeuralNetwork(object):
 
         self.weights[0] += inputs.T.dot(self.layeroutputdeltas[0]) * self.learningrate
         for i in range(1, self.netsize):
-            self.weights[i] += self.layeroutputs[i].T.dot(self.layeroutputdeltas[i]) * self.learningrate
+            self.weights[i] += self.layeroutputs[i-1].T.dot(self.layeroutputdeltas[i]) * self.learningrate
 
     def train(self, inputs, expectedoutputs):
         outputs = self.forward(inputs)
