@@ -1,14 +1,17 @@
 import numpy as np
 import NeuralNet
+import TestData
 
 # Inputs
-inputs = np.array(([0, 0], [1, 0], [0, 1], [1, 1]), dtype=float)
-outputs = np.array(([0], [1], [1], [0]), dtype=float)
+inputs, outputs = TestData.getData(3)
+t_inputs, t_outputs = TestData.getData(3)
 
-NN = NeuralNet.NeuralNetwork([2, 3, 1])
 
-for i in range(1):  # trains the NN 1,000 times
-    print("Loss: {}".format(np.mean(np.square(outputs - NN.forward(inputs)))))
+NN = NeuralNet.NeuralNetwork([2, 3, 4, 1], 0.001)
+
+for _ in range(100000):
     NN.train(inputs, outputs)
+    print("Loss: {}".format(np.mean(np.square(t_outputs - NN.forward(t_inputs)))))
 
-
+print(t_inputs)
+print(NN.forward(t_inputs))
